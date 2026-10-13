@@ -1,0 +1,20 @@
+# Vivado
+vivado/
+*.jou
+*.log
+*.str
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.gen/
+*.sim/
+.Xil/
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Archive
+*.7z
+*.zip
