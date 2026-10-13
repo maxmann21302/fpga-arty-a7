@@ -53,13 +53,13 @@ begin
                 s <= (others => '0');
 
                 if inc_h = '1' then
-                    if h = 23 then
+                    if h >= 23 then
                         h <= (others => '0');
                     else
                         h <= h + 1;
                     end if;
                 elsif dec_h = '1' then
-                    if h = 0 then
+                    if h = 0 or h > 23 then
                         h <= to_unsigned(23, h'length);
                     else
                         h <= h - 1;
@@ -68,13 +68,13 @@ begin
 
                 -- Minutenstellen erzeugt bewusst keinen Uebertrag auf die Stunden
                 if inc_m = '1' then
-                    if m = 59 then
+                    if m >= 59 then
                         m <= (others => '0');
                     else
                         m <= m + 1;
                     end if;
                 elsif dec_m = '1' then
-                    if m = 0 then
+                    if m = 0 or m > 59 then
                         m <= to_unsigned(59, m'length);
                     else
                         m <= m - 1;
@@ -82,11 +82,11 @@ begin
                 end if;
 
             elsif tick = '1' then
-                if s = 59 then
+                if s >= 59 then
                     s <= (others => '0');
-                    if m = 59 then
+                    if m >= 59 then
                         m <= (others => '0');
-                        if h = 23 then
+                        if h >= 23 then
                             h <= (others => '0');
                         else
                             h <= h + 1;

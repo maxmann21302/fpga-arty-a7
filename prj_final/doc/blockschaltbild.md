@@ -25,8 +25,8 @@ flowchart LR
     end
 
     subgraph OUT["Ausgänge"]
-        D1["Pmod SSD #1<br/>JA + JB (Stunden)"]
-        D2["Pmod SSD #2<br/>JC + JD (Minuten)"]
+        D1["Pmod SSD links<br/>JC + JD (Stunden)"]
+        D2["Pmod SSD rechts<br/>JA + JB (Minuten/Sekunden)"]
         LEDS["LD4..LD7<br/>optisches Signal"]
         SPK["Buzzer<br/>JA Pin 1 (G13)"]
     end
@@ -89,7 +89,7 @@ quittiert nur den Alarm (Zustand `SILENCED`), bis die Weckminute vorbei ist.
 
 ## 4. Anzeige-Auswahl (`display_mux`)
 
-| Priorität | Bedingung | linke Anzeige | rechte Anzeige |
+| Priorität | Bedingung | linke Anzeige (JC/JD) | rechte Anzeige (JA/JB) |
 |---|---|---|---|
 | 1 | `sw2 = 1` | Weckzeit Stunden | Weckzeit Minuten |
 | 2 | `sw1 = 1` | Stunden | Minuten |

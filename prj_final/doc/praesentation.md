@@ -49,7 +49,8 @@ mit zwei Pmod SSD
 | Signal | LD4…LD7 + Buzzer an JA Pin 1 |
 
 - Pmod SSD: **Common Cathode**, Segmente aktiv high
-- zwei 6-Pin-Header je Modul → JA+JB bzw. JC+JD, jeweils **untere Reihe**
+- zwei 6-Pin-Header je Modul (`J1`/`J2`) → JA+JB bzw. JC+JD, jeweils **untere Reihe**
+- links (Stunden) auf JC/JD, rechts (Minuten/Sekunden) auf JA/JB
 - gemeinsamer Segmentbus → **Zeitmultiplex nötig** (≥ 50 Hz)
 
 ---

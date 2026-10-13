@@ -64,8 +64,10 @@ also mit 500 Hz aufgefrischt.
 
 ### 1.4 Pin-Belegung
 
-Die Pmod SSD stecken auf den **unteren Reihen** (Pins 7–10) von JA/JB bzw. JC/JD.
-Die oberen Reihen bleiben dadurch frei und nehmen den Buzzer auf.
+Die Pmod SSD stecken auf den **unteren Reihen** (Pins 7–10) von JA/JB bzw. JC/JD,
+der jeweils erste Header (`J1`) auf JA bzw. JC, der zweite (`J2`) auf JB bzw. JD.
+Die **linke** Anzeige (Stunden) sitzt auf **JC/JD**, die **rechte** (Minuten bzw.
+Sekunden) auf **JA/JB**. Die oberen Reihen bleiben frei und nehmen den Buzzer auf.
 
 | Signal | Funktion | Pin |
 |---|---|---|
@@ -80,10 +82,10 @@ Die oberen Reihen bleiben dadurch frei und nehmen den Buzzer auf.
 | `btn[2]` | Minuten + | B9 |
 | `btn[3]` | Minuten − | B8 |
 | `led[0..3]` | Status / Weckanzeige | H5, J5, T9, T10 |
-| `seg_l[0..3]` | SSD #1 `AA`…`AD` | D13, B18, A18, K16 (JA 7–10) |
-| `seg_l[4..6]`, `dsel_l` | SSD #1 `AE`,`AF`,`AG`,`C` | J17, J18, K15, J15 (JB 7–10) |
-| `seg_r[0..3]` | SSD #2 `AA`…`AD` | U14, V14, T13, U13 (JC 7–10) |
-| `seg_r[4..6]`, `dsel_r` | SSD #2 `AE`,`AF`,`AG`,`C` | E2, D2, H2, G2 (JD 7–10) |
+| `seg_l[0..3]` | linke Anzeige `AA`…`AD` | U14, V14, T13, U13 (JC 7–10) |
+| `seg_l[4..6]`, `dsel_l` | linke Anzeige `AE`,`AF`,`AG`,`C` | E2, D2, H2, G2 (JD 7–10) |
+| `seg_r[0..3]` | rechte Anzeige `AA`…`AD` | D13, B18, A18, K16 (JA 7–10) |
+| `seg_r[4..6]`, `dsel_r` | rechte Anzeige `AE`,`AF`,`AG`,`C` | J17, J18, K15, J15 (JB 7–10) |
 | `buzzer_o` | akustisches Signal | G13 (JA Pin 1) |
 
 ---

@@ -50,13 +50,13 @@ begin
                 am <= (others => '0');
             elsif set_mode = '1' then
                 if inc_h = '1' then
-                    if ah = 23 then
+                    if ah >= 23 then
                         ah <= (others => '0');
                     else
                         ah <= ah + 1;
                     end if;
                 elsif dec_h = '1' then
-                    if ah = 0 then
+                    if ah = 0 or ah > 23 then
                         ah <= to_unsigned(23, ah'length);
                     else
                         ah <= ah - 1;
@@ -64,13 +64,13 @@ begin
                 end if;
 
                 if inc_m = '1' then
-                    if am = 59 then
+                    if am >= 59 then
                         am <= (others => '0');
                     else
                         am <= am + 1;
                     end if;
                 elsif dec_m = '1' then
-                    if am = 0 then
+                    if am = 0 or am > 59 then
                         am <= to_unsigned(59, am'length);
                     else
                         am <= am - 1;
