@@ -4,6 +4,9 @@ Das Blockschaltbild zeigt die wesentlichen Funktionseinheiten des gesamten
 Weckers und ihre Signalverbindungen. Mehrere VHDL-Module sind jeweils zu einem
 Funktionsblock zusammengefasst.
 
+Eine bearbeitbare Version des Blockschaltbilds ist in
+[blockschaltbild_simple.drawio](./blockschaltbild_simple.drawio) verfügbar.
+
 ```mermaid
 %%{init: {"flowchart": {"curve": "linear"}}}%%
 flowchart LR
