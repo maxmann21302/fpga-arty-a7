@@ -1,0 +1,8 @@
+phase_1/vivado/
+phase_2/vivado/
+phase_1/sim/build/
+phase_2/sim/build/
+*.cf
+*.jou
+*.log
+__pycache__/
