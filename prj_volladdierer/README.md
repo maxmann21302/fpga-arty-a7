@@ -84,6 +84,59 @@ $$
 
 Der Uebertrag ist also 1, wenn mindestens zwei Eingaenge 1 sind.
 
+### Uebertrag in XOR-Form (Loesung des Professors)
+
+Die Mehrheitsform oben ist nicht die einzige Darstellung. Aus derselben KDNF
+laesst sich auch die XOR-Form herleiten, indem man die Terme anders gruppiert.
+
+#### Schritt 1: Terme zusammenfassen
+
+Die Zeilen `110` und `111` unterscheiden sich nur in `cin`.
+Deshalb faellt `cin` beim Zusammenfassen weg:
+
+$$
+(x \land y \land \neg cin) \lor (x \land y \land cin)
+= x \land y \land (\neg cin \lor cin)
+= x \land y
+$$
+
+#### Schritt 2: cin ausklammern
+
+Bei den verbleibenden Zeilen `011` und `101` ist `cin` jeweils 1.
+Man kann es ausklammern:
+
+$$
+(\neg x \land y \land cin) \lor (x \land \neg y \land cin)
+= cin \land \bigl((\neg x \land y) \lor (x \land \neg y)\bigr)
+$$
+
+#### Schritt 3: XOR erkennen
+
+Der Ausdruck in der Klammer ist genau die Definition von XOR:
+Er ist 1, wenn `x` und `y` unterschiedlich sind.
+
+$$
+(\neg x \land y) \lor (x \land \neg y) = x \oplus y
+$$
+
+Die ODER-Verknuepfung beider Gruppen ergibt daher:
+
+$$
+\boxed{cout = (x \land y) \lor \bigl(cin \land (x \oplus y)\bigr)}
+$$
+
+Anschaulich gibt es zwei Faelle fuer einen Uebertrag:
+
+- `x` und `y` sind beide 1: Schon ihre Addition erzeugt einen Uebertrag,
+  unabhaengig von `cin`.
+- Genau einer der Eingaenge `x` und `y` ist 1: Ein Uebertrag entsteht nur,
+  wenn auch `cin` gleich 1 ist.
+
+Der Term `cin and (x xor y)` allein erfasst nur den zweiten Fall.
+Beide vereinfachten Formen sind fuer die binaeren Werte 0 und 1 gleichwertig;
+sie sind keine KDNF mehr, da ihre UND-Terme nicht alle Eingaenge enthalten
+beziehungsweise XOR verwendet wird.
+
 ## 3. Umsetzung in VHDL
 
 Die Operatoren werden direkt uebersetzt: $\oplus$ zu `xor`, $\land$ zu `and`
@@ -94,6 +147,16 @@ und $\lor$ zu `or`. Daraus entstehen die beiden Zuweisungen in
 sum  <= x xor y xor cin;
 cout <= (x and y) or (x and cin) or (y and cin);
 ```
+
+Alternativ kann die Zuweisung fuer `cout` durch die hergeleitete XOR-Form
+ersetzt werden. Dies ist die Loesung des Professors:
+
+```vhdl
+cout <= (x and y) or (cin and (x xor y));
+```
+
+Beide Varianten liefern fuer alle acht Zeilen der Wahrheitstabelle dieselben
+Ausgaenge. Die vorhandene VHDL-Datei verwendet weiterhin die Mehrheitsform.
 
 Die Entity in derselben Datei legt die Schnittstelle fest: `x`, `y` und `cin`
 sind Eingaenge; `sum` und `cout` sind Ausgaenge. Alle Ports haben den Typ
