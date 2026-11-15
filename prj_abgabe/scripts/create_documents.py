@@ -508,7 +508,8 @@ def make_ppt(path, phase):
 
 
 def main():
-    for phase, sections in [(1, PHASE1), (2, PHASE1 + PHASE2)]:
+    # Phase 1 has its own generator: phase_1/scripts/create_docs.py
+    for phase, sections in [(2, PHASE1 + PHASE2)]:
         directory = ROOT / f'phase_{phase}' / 'doc'
         directory.mkdir(parents=True, exist_ok=True)
         diagram(directory / 'block_phase1.png', 1)

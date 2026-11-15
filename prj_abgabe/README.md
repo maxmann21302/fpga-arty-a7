@@ -5,22 +5,29 @@ Zielhardware: **Digilent Arty A7-35T**, FPGA `xc7a35ticsg324-1L`,
 Jede Phase ist ein eigenstaendiger Projektordner.
 Das bestehende Projekt `prj_final` wurde nicht veraendert.
 
-## Phase 1: Anzeige und Tasterzaehler
+## Phase 1: Anzeige mit Betriebsarten
 
-[phase_1](phase_1) setzt die Aufgaben aus image3/image4 um und ergaenzt
-einen entprellten Tasterzaehler:
+[phase_1](phase_1) setzt die Aufgaben aus image3/image4 um. Die Schalter
+SW0 ... SW3 waehlen die Betriebsart (genau ein Schalter oben):
 
-- Nach Reset steht rechts **0**, die linke Stelle bleibt dunkel.
-- **BTN0** zaehlt pro Tastendruck genau einmal: 0, 1, ..., 9, 0.
-- Langes Halten erzeugt keine Wiederholung; Loslassen zaehlt nicht.
-- Der aktive Low-Reset **ck_rst** setzt die Anzeige zurueck.
+| Schalter | Anzeige | Taster |
+| --- | --- | --- |
+| SW0 | Zaehler 0 ... 99, Start 0 | BTN0 +1, BTN1 -1, BTN2 +10, BTN3 -10; nie < 0, > 99 -> 0 |
+| SW1 | 91 (Matrikelnummer Mark) | - |
+| SW2 | 93 (Matrikelnummer Maxi) | - |
+| SW3 | Binaereingabe 0 ... 15 (dezimal angezeigt) | BTNi invertiert Bit i |
+| keiner / mehrere | dunkel | - |
 
-Unterlagen:
+- Taster sind entprellt (10 ms); ein Druck ist genau ein Schritt, Halten wiederholt nicht.
+- Zaehler und Binaerwert bleiben beim Moduswechsel erhalten; **ck_rst** setzt beide auf 0.
 
-- [Bericht als PDF, 10 Seiten](phase_1/doc/bericht_phase_1.pdf)
+Unterlagen (erzeugt mit `python phase_1/scripts/create_docs.py`):
+
+- [Bericht als PDF, 25 Seiten](phase_1/doc/bericht_phase_1.pdf)
 - [Bearbeitbarer Bericht als DOCX](phase_1/doc/bericht_phase_1.docx)
 - [Bericht als Markdown](phase_1/doc/bericht_phase_1.md)
-- [PowerPoint: 14 Folien mit Sprechernotizen, ca. 20 Minuten](phase_1/doc/praesentation_phase_1.pptx)
+- [PowerPoint: 32 Folien mit Sprechernotizen, ca. 40 Minuten](phase_1/doc/praesentation_phase_1.pptx)
+- Blockschaltbilder je Betriebsart, Segment-/Multiplex-/Entprell-Grafiken: [phase_1/doc/img](phase_1/doc/img)
 
 ## Phase 2: Sekundenzaehler 00 bis 99
 
@@ -58,7 +65,8 @@ Pins 1 bis 4 verwechseln. Versorgung ausschalten, bevor umgesteckt wird;
 | --- | --- | --- |
 | CLK100MHZ | E3 | Board-Oszillator |
 | ck_rst | C2 | Reset, aktiv Low |
-| btn_up | D9 | BTN0, nur Phase 1 |
+| sw[0..3] | A8, C11, C10, A10 | SW0 ... SW3, nur Phase 1 |
+| btn[0..3] | D9, C9, B9, B8 | BTN0 ... BTN3, nur Phase 1 |
 | seg_r[0], Segment a | D13 | JA7 -> SSD AA |
 | seg_r[1], Segment b | B18 | JA8 -> SSD AB |
 | seg_r[2], Segment c | A18 | JA9 -> SSD AC |
@@ -110,7 +118,7 @@ Tatsaechlich ausgefuehrte Tests mit **GHDL 6.0.0**:
 
 | Phase | Ergebnis | Abdeckung |
 | --- | --- | --- |
-| 1 | PASS bei 7.290 ns | Start, Prellen, Halten, Loslassen, alle Ziffern, 9 -> 0, Reset, linker Slot dunkel |
+| 1 | PASS bei 69.050 ns | SW0: Start 0, +-1, +-10, Grenze 0, 99 -> 0, 95 + 10 -> 0; SW1 91; SW2 93; SW3 alle 0..15; ungueltige Schalter dunkel; Prellen, Halten, Reset, Werterhalt |
 | 2 | PASS bei 1.033.690 ns | Exakte Taktanzahl je Schritt, alle 00..99, 09 -> 10, 99 -> 00, beide Slots, Reset und Intervallneustart |
 
 Protokolle: [Phase 1](phase_1/sim/testergebnis.txt),
@@ -123,19 +131,18 @@ Pinbelegung, Implementierung, Testmethodik, beobachtete Ergebnisse,
 Board-Prueflisten und Quellen. Die vollstaendigen VHDL-Dateien und
 Testbenches sind als separate, direkt kompilierbare Abgabedateien enthalten.
 
-Die PowerPoints besitzen je 14 Folien und Notizen mit einem Gesamtzeitbudget
-von 20 Minuten; die Fragerunde kommt zusaetzlich hinzu.
+Phase 1: 32 Folien, 40 Minuten; Phase 2: 14 Folien, 20 Minuten (jeweils mit
+Sprechernotizen, Fragerunde zusaetzlich).
 
 ```powershell
 python -m pip install -r scripts/requirements.txt
-python scripts/create_documents.py
+python phase_1/scripts/create_docs.py   # Phase 1
+python scripts/create_documents.py      # Phase 2 (kombinierter Bericht)
 ```
 
-Der Generator aktualisiert DOCX, Markdown, PPTX und technische PNG-Grafiken.
-PDFs anschliessend aus den aktualisierten DOCX-Dateien mit Word exportieren.
-Die vorliegenden PDFs wurden mit Microsoft Word erzeugt; die tatsaechlichen
-Seitenzahlen 10/20 wurden kontrolliert. Beide PowerPoints wurden mit Microsoft
-PowerPoint gerendert und auf Textueberlaeufe geprueft.
+Die Generatoren aktualisieren DOCX, Markdown, PPTX und PNG-Grafiken.
+PDFs anschliessend aus den aktualisierten DOCX-Dateien mit Word exportieren
+(Phase 1: 25 Seiten, Phase 2: 20 Seiten).
 
 ## Vor der endgueltigen Abgabe
 

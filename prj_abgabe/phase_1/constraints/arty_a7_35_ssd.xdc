@@ -1,9 +1,16 @@
 set_property -dict { PACKAGE_PIN E3 IOSTANDARD LVCMOS33 } [get_ports CLK100MHZ]
 create_clock -name sys_clk_pin -period 10.000 [get_ports CLK100MHZ]
 set_property -dict { PACKAGE_PIN C2 IOSTANDARD LVCMOS33 } [get_ports ck_rst]
-if {[llength [get_ports -quiet btn_up]] > 0} {
-    set_property -dict { PACKAGE_PIN D9 IOSTANDARD LVCMOS33 } [get_ports btn_up]
-}
+## SW0: Zaehler | SW1: 91 (Mark) | SW2: 93 (Maxi) | SW3: Binaereingabe
+set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports {sw[0]}]
+set_property -dict { PACKAGE_PIN C11 IOSTANDARD LVCMOS33 } [get_ports {sw[1]}]
+set_property -dict { PACKAGE_PIN C10 IOSTANDARD LVCMOS33 } [get_ports {sw[2]}]
+set_property -dict { PACKAGE_PIN A10 IOSTANDARD LVCMOS33 } [get_ports {sw[3]}]
+## BTN0: +1 / Bit0 | BTN1: -1 / Bit1 | BTN2: +10 / Bit2 | BTN3: -10 / Bit3
+set_property -dict { PACKAGE_PIN D9 IOSTANDARD LVCMOS33 } [get_ports {btn[0]}]
+set_property -dict { PACKAGE_PIN C9 IOSTANDARD LVCMOS33 } [get_ports {btn[1]}]
+set_property -dict { PACKAGE_PIN B9 IOSTANDARD LVCMOS33 } [get_ports {btn[2]}]
+set_property -dict { PACKAGE_PIN B8 IOSTANDARD LVCMOS33 } [get_ports {btn[3]}]
 set_property -dict { PACKAGE_PIN D13 IOSTANDARD LVCMOS33 } [get_ports {seg_r[0]}]
 set_property -dict { PACKAGE_PIN B18 IOSTANDARD LVCMOS33 } [get_ports {seg_r[1]}]
 set_property -dict { PACKAGE_PIN A18 IOSTANDARD LVCMOS33 } [get_ports {seg_r[2]}]
