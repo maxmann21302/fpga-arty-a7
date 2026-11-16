@@ -14,6 +14,7 @@ architecture test of tb_bounce_capture is
     signal rst    : std_logic := '1';
     signal clear  : std_logic := '0';
     signal sig    : std_logic := '0';
+    signal edge   : std_logic := '0';
     signal period : period_t := P;
     signal hi_buf : std_logic_vector(SAMPLES - 1 downto 0);
     signal lo_buf : std_logic_vector(SAMPLES - 1 downto 0);
@@ -27,12 +28,12 @@ begin
     clk <= not clk after 5 ns;
 
     dut : entity work.bounce_capture
-        port map (clk => clk, rst => rst, clear => clear, sig => sig, period => period,
+        port map (clk => clk, rst => rst, clear => clear, sig => sig, edge => edge, period => period,
                   hi_buf => hi_buf, lo_buf => lo_buf, armed => armed, done => done);
 
     u_render : entity work.bounce_render
         port map (clk => clk, x => px, y => py, hi_buf => hi_buf, lo_buf => lo_buf,
-                  armed => armed, done => done, tb_idx => TB_DEFAULT, pix => pix);
+                  armed => armed, done => done, src => '0', edge => edge, tb_idx => TB_DEFAULT, pix => pix);
 
     process
         procedure cycles(n : positive) is
@@ -114,7 +115,27 @@ begin
         expect_pix(PRE_TRIG, 31, x"0000", "geloescht keine Kurve");
         expect_pix(80, 1, x"FFE0", "WAIT-Text gelb");
 
-        report "PASS: bounce_capture Trigger, Min/Max-Glitch, HOLD, Loeschen, Darstellung" severity note;
+        -- fallende Flanke (Loslassen): steigende Flanken duerfen nicht ausloesen
+        edge <= '1';
+        sig  <= '1';
+        wait until falling_edge(clk);
+        clear <= '1'; cycles(1);
+        clear <= '0';
+        cycles(SAMPLES * P + 10);
+        assert armed = '1' report "steigende Flanke loest bei edge=1 aus" severity failure;
+        sig <= '0'; cycles(1);
+        sig <= '1'; cycles(3 * P);
+        assert armed = '0' report "fallende Flanke nicht erkannt" severity failure;
+        sig <= '0';
+        wait until done = '1';
+        cycles(2);
+        for k in 0 to PRE_TRIG - 1 loop
+            expect_col(k, '1', "Vorlauf fallend");
+        end loop;
+        expect_col(PRE_TRIG, 'X', "Triggerspalte fallend");
+        expect_col(SAMPLES - 1, '0', "Ende stabil low");
+
+        report "PASS: bounce_capture Trigger steigend/fallend, Min/Max-Glitch, HOLD, Loeschen, Darstellung" severity note;
         finish;
     end process;
 end architecture;

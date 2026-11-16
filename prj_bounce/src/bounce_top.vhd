@@ -1,11 +1,13 @@
 ----------------------------------------------------------------------------------
 -- Projekt      : Prell-Oszilloskop (Pmod OLEDrgb an JD)
 -- Modul        : bounce_top
--- Bedienung    : BTN0  Messeingang (nur synchronisiert, NICHT entprellt);
---                      Aufnahme startet mit der ersten steigenden Flanke
+-- Bedienung    : BTN0  Messeingang (nur synchronisiert, NICHT entprellt)
+--                SW0   Triggerflanke: 0 = steigend (Druecken), 1 = fallend (Loslassen)
+--                SW1   Messeingang: 0 = BTN0, 1 = Pmod JA1 (interner Pull-down)
 --                BTN1  Aufnahme loeschen, neu scharf schalten
 --                BTN2  Zeitbasis kleiner (min. 1 us/div), loescht die Aufnahme
 --                BTN3  Zeitbasis groesser (max. 10 ms/div), loescht die Aufnahme
+--                Umschalten von SW0/SW1 loescht die Aufnahme ebenfalls
 --                RESET alles zuruecksetzen, Display neu initialisieren
 ----------------------------------------------------------------------------------
 
@@ -24,6 +26,8 @@ entity bounce_top is
         CLK100MHZ   : in  std_logic;
         ck_rst      : in  std_logic;
         btn         : in  std_logic_vector(3 downto 0);
+        sw          : in  std_logic_vector(1 downto 0);
+        ext_in      : in  std_logic;
         oled_cs     : out std_logic;
         oled_mosi   : out std_logic;
         oled_sck    : out std_logic;
@@ -39,6 +43,11 @@ architecture rtl of bounce_top is
     signal reset_sync : std_logic_vector(1 downto 0) := (others => '1');
     signal rst        : std_logic;
     signal btn0_sync  : std_logic_vector(1 downto 0) := (others => '0');
+    signal ext_sync   : std_logic_vector(1 downto 0) := (others => '0');
+    signal sw_meta    : std_logic_vector(1 downto 0) := (others => '0');
+    signal sw_sync    : std_logic_vector(1 downto 0) := (others => '0');
+    signal sw_prev    : std_logic_vector(1 downto 0) := (others => '0');
+    signal sig        : std_logic;
     signal press      : std_logic_vector(3 downto 1);
     signal clear      : std_logic;
 
@@ -72,8 +81,14 @@ begin
     begin
         if rising_edge(CLK100MHZ) then
             btn0_sync <= btn0_sync(0) & btn(0);
+            ext_sync  <= ext_sync(0) & ext_in;
+            sw_meta   <= sw;
+            sw_sync   <= sw_meta;
+            sw_prev   <= sw_sync;
         end if;
     end process;
+
+    sig <= ext_sync(1) when sw_sync(1) = '1' else btn0_sync(1);
 
     gen_btn : for i in 1 to 3 generate
         u_btn : entity work.btn_debounce
@@ -95,15 +110,16 @@ begin
         end if;
     end process;
 
-    -- alte Aufnahme passt nicht mehr zur neuen Zeitbasis
-    clear <= press(1) or press(2) or press(3);
+    -- alte Aufnahme passt nicht mehr zu neuer Zeitbasis / Quelle / Flanke
+    clear <= '1' when press /= "000" or sw_sync /= sw_prev else '0';
 
     u_capture : entity work.bounce_capture
         port map (
             clk    => CLK100MHZ,
             rst    => rst,
             clear  => clear,
-            sig    => btn0_sync(1),
+            sig    => sig,
+            edge   => sw_sync(0),
             period => period,
             hi_buf => hi_buf,
             lo_buf => lo_buf,
@@ -120,6 +136,8 @@ begin
             lo_buf => lo_buf,
             armed  => armed,
             done   => done,
+            src    => sw_sync(1),
+            edge   => sw_sync(0),
             tb_idx => tb_idx,
             pix    => pix
         );

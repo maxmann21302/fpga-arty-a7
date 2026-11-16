@@ -2,7 +2,7 @@
 -- Projekt      : Prell-Oszilloskop (Pmod OLEDrgb an JD)
 -- Modul        : bounce_render
 -- Beschreibung : Pixelgenerator 96x64 (RGB565), 2 Takte Latenz
---                Zeile oben : Zeitbasis links, Status rechts (WAIT / RUN / HOLD)
+--                Zeile oben : Zeitbasis, Quelle (BTN0 / JA1), Triggerflanke, Status
 --                Darunter   : Raster, Triggermarke, Signalverlauf (nicht im Status WAIT)
 ----------------------------------------------------------------------------------
 
@@ -21,6 +21,8 @@ entity bounce_render is
         lo_buf : in  std_logic_vector(SAMPLES - 1 downto 0);
         armed  : in  std_logic;
         done   : in  std_logic;
+        src    : in  std_logic;
+        edge   : in  std_logic;
         tb_idx : in  natural range 0 to TB_COUNT - 1;
         pix    : out std_logic_vector(15 downto 0)
     );
@@ -30,6 +32,8 @@ architecture rtl of bounce_render is
 
     constant TEXT_Y  : natural := 1;
     constant LABEL_X : natural := 1;
+    constant SRC_X   : natural := 42;
+    constant EDGE_X  : natural := 60;
     constant STAT_X  : natural := 80;
     constant PLOT_Y  : natural := 9;
     constant Y_HI    : natural := 18;
@@ -72,6 +76,10 @@ architecture rtl of bounce_render is
             when 'O'    => return B"010_101_101_101_010";
             when 'L'    => return B"100_100_100_100_111";
             when 'D'    => return B"110_101_101_101_110";
+            when 'B'    => return B"110_101_110_101_110";
+            when 'J'    => return B"001_001_001_101_010";
+            when '^'    => return B"010_111_010_010_010";   -- Pfeil hoch
+            when '_'    => return B"010_010_010_111_010";   -- Pfeil runter
             when others => return B"000_000_000_000_000";
         end case;
     end function;
@@ -118,6 +126,23 @@ begin
                 lbl := TB_LABEL(tb_idx);
                 ch  := lbl(col / 4 + 1);
                 cx1 <= col mod 4;
+            elsif xi >= SRC_X and xi < SRC_X + 4 * 4 then
+                col := xi - SRC_X;
+                if src = '1' then
+                    stat := "JA1 ";
+                else
+                    stat := "BTN0";
+                end if;
+                ch  := stat(col / 4 + 1);
+                cx1 <= col mod 4;
+            elsif xi >= EDGE_X and xi < EDGE_X + 4 then
+                if edge = '1' then
+                    ch := '_';
+                else
+                    ch := '^';
+                end if;
+                tcol1 <= C_TRIG;
+                cx1   <= xi - EDGE_X;
             elsif xi >= STAT_X and xi < STAT_X + 4 * 4 then
                 col := xi - STAT_X;
                 if armed = '1' then

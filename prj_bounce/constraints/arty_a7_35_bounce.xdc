@@ -14,6 +14,13 @@ set_property -dict { PACKAGE_PIN C9    IOSTANDARD LVCMOS33 } [get_ports { btn[1]
 set_property -dict { PACKAGE_PIN B9    IOSTANDARD LVCMOS33 } [get_ports { btn[2] }];
 set_property -dict { PACKAGE_PIN B8    IOSTANDARD LVCMOS33 } [get_ports { btn[3] }];
 
+## SW0: Triggerflanke (0 steigend, 1 fallend) | SW1: Quelle (0 BTN0, 1 JA1)
+set_property -dict { PACKAGE_PIN A8    IOSTANDARD LVCMOS33 } [get_ports { sw[0] }];
+set_property -dict { PACKAGE_PIN C11   IOSTANDARD LVCMOS33 } [get_ports { sw[1] }];
+
+## Externer Messeingang Pmod JA1 (max. 3,3 V!), Pull-down -> offen = 0
+set_property -dict { PACKAGE_PIN G13   IOSTANDARD LVCMOS33 PULLDOWN TRUE } [get_ports { ext_in }];
+
 ## Pmod JD - Pmod OLEDrgb
 set_property -dict { PACKAGE_PIN D4    IOSTANDARD LVCMOS33 } [get_ports { oled_cs }];      # JD1  CS
 set_property -dict { PACKAGE_PIN D3    IOSTANDARD LVCMOS33 } [get_ports { oled_mosi }];    # JD2  MOSI

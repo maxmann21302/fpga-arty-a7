@@ -4,7 +4,7 @@
 -- Beschreibung : Zeichnet ein (synchronisiertes) Signal als Min/Max-Abtastung auf.
 --                Pro Abtastintervall wird gespeichert, ob '1' (hi) und/oder '0' (lo)
 --                vorkam - so bleiben auch Pulse kuerzer als ein Intervall sichtbar.
---                Scharf -> erste steigende Flanke -> PRE Werte davor, N-PRE danach
+--                Scharf -> erste Flanke (Richtung per edge) -> PRE Werte davor, N-PRE danach
 --                -> eingefroren bis clear.
 --                Spalte k (0 = links) liegt in buf(N-1-k).
 ----------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ entity bounce_capture is
         rst    : in  std_logic;
         clear  : in  std_logic;
         sig    : in  std_logic;
+        edge   : in  std_logic;              -- '0' steigend, '1' fallend
         period : in  period_t;               -- Takte pro Abtastwert
         hi_buf : out std_logic_vector(N - 1 downto 0);
         lo_buf : out std_logic_vector(N - 1 downto 0);
@@ -65,7 +66,7 @@ begin
                 lo_sr  <= (others => '0');
                 post   <= 0;
 
-            elsif state = S_ARMED and sig = '1' and sig_d = '0' then
+            elsif state = S_ARMED and sig /= sig_d and sig = not edge then
                 -- Intervall vor dem Trigger abschliessen; Triggerspalte enthaelt die Flanke
                 hi_sr  <= hi_sr(N - 2 downto 0) & hi_acc;
                 lo_sr  <= lo_sr(N - 2 downto 0) & lo_acc;
