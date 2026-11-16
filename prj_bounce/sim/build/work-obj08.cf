@@ -1,0 +1,24 @@
+v 4
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/sim/tb_bounce_capture.vhd" "40ff17dcddad8bed0ea30756e539a533ee2c5071" "20261116135738.421":
+  entity tb_bounce_capture at 1( 0) + 0 on 24;
+  architecture test of tb_bounce_capture at 11( 164) + 0 on 25;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/bounce_top.vhd" "848769f40136520459a6f433cde26906cd19d9ce" "20261116135738.409":
+  entity bounce_top at 12( 710) + 0 on 22;
+  architecture rtl of bounce_top at 37( 1392) + 0 on 23;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/bounce_render.vhd" "35173d987556a64e1990b75e97c2452f3111fed3" "20261116135738.408":
+  entity bounce_render at 9( 500) + 0 on 20;
+  architecture rtl of bounce_render at 29( 1094) + 0 on 21;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/bounce_capture.vhd" "76e3d2e7eea22996f6d37a2acf0b317ad5a27633" "20261116135738.406":
+  entity bounce_capture at 12( 711) + 0 on 18;
+  architecture rtl of bounce_capture at 35( 1336) + 0 on 19;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/oled_ctrl.vhd" "794456435dc3868c35005f80cf06299baaf50da5" "20261116135738.405":
+  entity oled_ctrl at 10( 586) + 0 on 16;
+  architecture rtl of oled_ctrl at 37( 1521) + 0 on 17;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/spi_tx.vhd" "bab7db66f4111c3567fc71be8d3b3f5be25b1fdf" "20261116135738.377":
+  entity spi_tx at 8( 435) + 0 on 14;
+  architecture rtl of spi_tx at 30( 1013) + 0 on 15;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/btn_debounce.vhd" "7313e81556da3de3fece0417142c92e919e9530f" "20261116135738.375":
+  entity btn_debounce at 8( 401) + 0 on 12;
+  architecture rtl of btn_debounce at 23( 727) + 0 on 13;
+file / "C:\Users\smc3abt\OneDrive - Bosch Group\Studium\Abteilung_ECC\ECC9\Projekte\_repos\FPGA\prj_bounce/src/bounce_pkg.vhd" "e289ee84e3347a28cc6b3f59a6ae44eb226be11c" "20261116135738.374":
+  package bounce_pkg at 7( 333) + 0 on 11;
