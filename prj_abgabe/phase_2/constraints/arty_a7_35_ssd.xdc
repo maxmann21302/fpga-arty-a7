@@ -1,9 +1,17 @@
 set_property -dict { PACKAGE_PIN E3 IOSTANDARD LVCMOS33 } [get_ports CLK100MHZ]
 create_clock -name sys_clk_pin -period 10.000 [get_ports CLK100MHZ]
 set_property -dict { PACKAGE_PIN C2 IOSTANDARD LVCMOS33 } [get_ports ck_rst]
-if {[llength [get_ports -quiet btn_up]] > 0} {
-    set_property -dict { PACKAGE_PIN D9 IOSTANDARD LVCMOS33 } [get_ports btn_up]
-}
+## SW0: Sekunden 00..99 | SW1: Sekunden 0000..9999 | SW2: Stoppuhr | SW3: ungueltig
+set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports {sw[0]}]
+set_property -dict { PACKAGE_PIN C11 IOSTANDARD LVCMOS33 } [get_ports {sw[1]}]
+set_property -dict { PACKAGE_PIN C10 IOSTANDARD LVCMOS33 } [get_ports {sw[2]}]
+set_property -dict { PACKAGE_PIN A10 IOSTANDARD LVCMOS33 } [get_ports {sw[3]}]
+## Stoppuhr (nur SW2): BTN0 Start | BTN1 Stopp | BTN2 Nullen | BTN3 ohne Funktion
+set_property -dict { PACKAGE_PIN D9 IOSTANDARD LVCMOS33 } [get_ports {btn[0]}]
+set_property -dict { PACKAGE_PIN C9 IOSTANDARD LVCMOS33 } [get_ports {btn[1]}]
+set_property -dict { PACKAGE_PIN B9 IOSTANDARD LVCMOS33 } [get_ports {btn[2]}]
+set_property -dict { PACKAGE_PIN B8 IOSTANDARD LVCMOS33 } [get_ports {btn[3]}]
+## Pmod SSD rechts: JA Pins 7-10 = AA..AD, JB Pins 7-10 = AE, AF, AG, C
 set_property -dict { PACKAGE_PIN D13 IOSTANDARD LVCMOS33 } [get_ports {seg_r[0]}]
 set_property -dict { PACKAGE_PIN B18 IOSTANDARD LVCMOS33 } [get_ports {seg_r[1]}]
 set_property -dict { PACKAGE_PIN A18 IOSTANDARD LVCMOS33 } [get_ports {seg_r[2]}]
@@ -12,6 +20,15 @@ set_property -dict { PACKAGE_PIN J17 IOSTANDARD LVCMOS33 } [get_ports {seg_r[4]}
 set_property -dict { PACKAGE_PIN J18 IOSTANDARD LVCMOS33 } [get_ports {seg_r[5]}]
 set_property -dict { PACKAGE_PIN K15 IOSTANDARD LVCMOS33 } [get_ports {seg_r[6]}]
 set_property -dict { PACKAGE_PIN J15 IOSTANDARD LVCMOS33 } [get_ports dsel_r]
+## Pmod SSD links: JC Pins 7-10 = AA..AD, JD Pins 7-10 = AE, AF, AG, C
+set_property -dict { PACKAGE_PIN U14 IOSTANDARD LVCMOS33 } [get_ports {seg_l[0]}]
+set_property -dict { PACKAGE_PIN V14 IOSTANDARD LVCMOS33 } [get_ports {seg_l[1]}]
+set_property -dict { PACKAGE_PIN T13 IOSTANDARD LVCMOS33 } [get_ports {seg_l[2]}]
+set_property -dict { PACKAGE_PIN U13 IOSTANDARD LVCMOS33 } [get_ports {seg_l[3]}]
+set_property -dict { PACKAGE_PIN E2  IOSTANDARD LVCMOS33 } [get_ports {seg_l[4]}]
+set_property -dict { PACKAGE_PIN D2  IOSTANDARD LVCMOS33 } [get_ports {seg_l[5]}]
+set_property -dict { PACKAGE_PIN H2  IOSTANDARD LVCMOS33 } [get_ports {seg_l[6]}]
+set_property -dict { PACKAGE_PIN G2  IOSTANDARD LVCMOS33 } [get_ports dsel_l]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]

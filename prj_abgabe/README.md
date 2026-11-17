@@ -29,22 +29,29 @@ Unterlagen (erzeugt mit `python phase_1/scripts/create_docs.py`):
 - [PowerPoint: 32 Folien mit Sprechernotizen, ca. 40 Minuten](phase_1/doc/praesentation_phase_1.pptx)
 - Blockschaltbilder je Betriebsart, Segment-/Multiplex-/Entprell-Grafiken: [phase_1/doc/img](phase_1/doc/img)
 
-## Phase 2: Sekundenzaehler 00 bis 99
+## Phase 2: Sekundenzaehler, 4-stelliger Zaehler und Stoppuhr
 
-[phase_2](phase_2) setzt die Aufgabe aus image5 um:
+[phase_2](phase_2) setzt die Aufgabe aus image5 um (Zaehler im Sekundentakt
+0 ... 99, Reset per Taster) und erweitert sie mit einem **zweiten Pmod SSD an JC/JD**:
 
-- Automatischer Start nach Resetfreigabe, **ein Schritt pro Sekunde**.
-- Beide Stellen sind aktiv: **00, 01, ..., 99, 00**.
-- **ck_rst** setzt Zahlenstand und Sekundenteiler zurueck.
-- Nach dem Loslassen beginnt ein neues vollstaendiges Sekundenintervall.
-- Kein Start-/Stop-Taster; BTN0 wird hier nicht verwendet.
+| Schalter | SSD links (JC/JD) | SSD rechts (JA/JB) | Taster |
+| --- | --- | --- | --- |
+| SW0 | dunkel | Sekunden 00 ... 99 (Pflicht), 99 -> 00 | - |
+| SW1 | Tausender/Hunderter | Zehner/Einer: Sekunden 0000 ... 9999 | - |
+| SW2 | Stoppuhr Sekunden 00 ... 99 | Hundertstel 00 ... 99 | BTN0 Start, BTN1 Stopp, BTN2 Nullen (nur im Stopp) |
+| keiner / mehrere / SW3 | dunkel | dunkel | - |
 
-Unterlagen:
+- Alle Zaehler und eine laufende Stoppuhr laufen beim Moduswechsel im Hintergrund weiter.
+- 99.99 -> 00.00, die Stoppuhr laeuft weiter. Fuehrende Nullen werden angezeigt.
+- **ck_rst** setzt alles zurueck und haelt die Stoppuhr an.
 
-- [Kombinierter Bericht Phase I+II als PDF, 20 Seiten](phase_2/doc/bericht_phase_1_und_2.pdf)
-- [Bearbeitbarer kombinierter Bericht als DOCX](phase_2/doc/bericht_phase_1_und_2.docx)
-- [Kombinierter Bericht als Markdown](phase_2/doc/bericht_phase_1_und_2.md)
-- [PowerPoint: 14 Folien mit Sprechernotizen, ca. 20 Minuten](phase_2/doc/praesentation_phase_2.pptx)
+Unterlagen (erzeugt mit `python phase_2/scripts/create_docs.py`):
+
+- [Bericht als PDF, 25 Seiten](phase_2/doc/bericht_phase_2.pdf)
+- [Bearbeitbarer Bericht als DOCX](phase_2/doc/bericht_phase_2.docx)
+- [Bericht als Markdown](phase_2/doc/bericht_phase_2.md)
+- [PowerPoint: 35 Folien mit Sprechernotizen, ca. 40 Minuten](phase_2/doc/praesentation_phase_2.pptx)
+- Blockschaltbilder je Betriebsart, Zeitbasis, Kaskade, Stoppuhr, Verdrahtung: [phase_2/doc/img](phase_2/doc/img)
 
 ## Phase 3: Wecker
 
@@ -56,17 +63,18 @@ kein neuer Funktionstest des Weckers.
 
 ## Verdrahtung fuer Phase 1 und 2
 
-Ein Pmod SSD reicht aus. Wie im Weckerprojekt werden **JA und JB jeweils
-in der unteren Reihe, Pins 7 bis 10**, verwendet. Nicht mit den oberen
-Pins 1 bis 4 verwechseln. Versorgung ausschalten, bevor umgesteckt wird;
+Phase 1 braucht ein Pmod SSD, Phase 2 zwei. Wie im Weckerprojekt werden die
+Pmod-Ports **jeweils in der unteren Reihe, Pins 7 bis 10**, verwendet: JA/JB fuer
+das rechte SSD (Phase 1 und 2), JC/JD fuer das linke SSD (nur Phase 2). Nicht mit
+den oberen Pins 1 bis 4 verwechseln. Versorgung ausschalten, bevor umgesteckt wird;
 3,3-V-Versorgung und gemeinsame Masse entsprechend Pmod-Dokumentation anschliessen.
 
 | Signal | FPGA-Pin | Verbindung |
 | --- | --- | --- |
 | CLK100MHZ | E3 | Board-Oszillator |
 | ck_rst | C2 | Reset, aktiv Low |
-| sw[0..3] | A8, C11, C10, A10 | SW0 ... SW3, nur Phase 1 |
-| btn[0..3] | D9, C9, B9, B8 | BTN0 ... BTN3, nur Phase 1 |
+| sw[0..3] | A8, C11, C10, A10 | SW0 ... SW3 |
+| btn[0..3] | D9, C9, B9, B8 | BTN0 ... BTN3 |
 | seg_r[0], Segment a | D13 | JA7 -> SSD AA |
 | seg_r[1], Segment b | B18 | JA8 -> SSD AB |
 | seg_r[2], Segment c | A18 | JA9 -> SSD AC |
@@ -75,6 +83,9 @@ Pins 1 bis 4 verwechseln. Versorgung ausschalten, bevor umgesteckt wird;
 | seg_r[5], Segment f | J18 | JB8 -> SSD AF |
 | seg_r[6], Segment g | K15 | JB9 -> SSD AG |
 | dsel_r | J15 | JB10 -> SSD C |
+| seg_l[0..3], Segment a..d (Phase 2) | U14, V14, T13, U13 | JC7 ... JC10 -> SSD links AA ... AD |
+| seg_l[4..6], Segment e..g (Phase 2) | E2, D2, H2 | JD7 ... JD9 -> SSD links AE ... AG |
+| dsel_l (Phase 2) | G2 | JD10 -> SSD links C |
 
 Segmente sind aktiv High, Bitreihenfolge `gfedcba`.
 Die Zuordnung `dsel_r=0` fuer die rechte Stelle entspricht dem vorhandenen
@@ -109,7 +120,9 @@ Voraussetzung: GHDL mit VHDL-2008-Unterstuetzung. Aus dem jeweiligen Phasenordne
 ```
 
 Liegt GHDL nicht im PATH, bei `-Ghdl` den vollstaendigen Pfad zu `ghdl.exe`
-angeben. Das Skript legt Arbeitsbibliothek und Wellenform unter `sim/build/` ab.
+angeben. Das Skript legt die Arbeitsbibliothek (und in Phase 1 die Wellenform)
+unter `sim/build/` ab. In Phase 2 wird die Wellenform nur mit `-Wave` erzeugt,
+weil 10.000 simulierte Sekunden mehrere 100 MB ergeben (Laufzeit ca. 40 s).
 Die selbstpruefenden Testbenches stoppen bei einer falschen Ausgabe mit Fehler.
 Die verkleinerten Simulationsparameter beschleunigen den Test; sie sind keine
 realen Sekunden- oder Entprellmessungen.
@@ -119,7 +132,7 @@ Tatsaechlich ausgefuehrte Tests mit **GHDL 6.0.0**:
 | Phase | Ergebnis | Abdeckung |
 | --- | --- | --- |
 | 1 | PASS bei 69.050 ns | SW0: Start 0, +-1, +-10, Grenze 0, 99 -> 0, 95 + 10 -> 0; SW1 91; SW2 93; SW3 alle 0..15; ungueltige Schalter dunkel; Prellen, Halten, Reset, Werterhalt |
-| 2 | PASS bei 1.033.690 ns | Exakte Taktanzahl je Schritt, alle 00..99, 09 -> 10, 99 -> 00, beide Slots, Reset und Intervallneustart |
+| 2 | PASS bei 101.151.070 ns | SW0 Sekunde 1..102 inkl. 99 -> 00, links dunkel; SW1 4-stellig inkl. 9999 -> 0000; Stoppuhr Start/Stopp/Halten/Nullen (im Lauf ignoriert), Hintergrundbetrieb, 99.99 -> 00.00; Taster ausserhalb SW2 wirkungslos; ungueltige Schalter dunkel; Reset |
 
 Protokolle: [Phase 1](phase_1/sim/testergebnis.txt),
 [Phase 2](phase_2/sim/testergebnis.txt).
@@ -131,18 +144,18 @@ Pinbelegung, Implementierung, Testmethodik, beobachtete Ergebnisse,
 Board-Prueflisten und Quellen. Die vollstaendigen VHDL-Dateien und
 Testbenches sind als separate, direkt kompilierbare Abgabedateien enthalten.
 
-Phase 1: 32 Folien, 40 Minuten; Phase 2: 14 Folien, 20 Minuten (jeweils mit
+Phase 1: 32 Folien, 40 Minuten; Phase 2: 35 Folien, 40 Minuten (jeweils mit
 Sprechernotizen, Fragerunde zusaetzlich).
 
 ```powershell
 python -m pip install -r scripts/requirements.txt
 python phase_1/scripts/create_docs.py   # Phase 1
-python scripts/create_documents.py      # Phase 2 (kombinierter Bericht)
+python phase_2/scripts/create_docs.py   # Phase 2
 ```
 
 Die Generatoren aktualisieren DOCX, Markdown, PPTX und PNG-Grafiken.
 PDFs anschliessend aus den aktualisierten DOCX-Dateien mit Word exportieren
-(Phase 1: 25 Seiten, Phase 2: 20 Seiten).
+(Phase 1: 25 Seiten, Phase 2: 25 Seiten).
 
 ## Vor der endgueltigen Abgabe
 
